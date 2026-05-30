@@ -13,7 +13,7 @@ Si no has usado NestJS o Node, lee primero la [visión global](#visión-global-s
 | `package.json` con dependencias y scripts | Archivos bajo `src/auth/` |
 | `src/database/data-source.ts` | `src/modulo1/clase01/clase01.controller.ts` |
 | `src/database/database.module.ts` | Cambios en `src/modulo1/modulo1.module.ts` |
-| `src/api-clients/entities/api-client.entity.ts` | |
+| `src/entities/api-client.entity.ts` | |
 | `src/migrations/...CreateApiClients.ts` | |
 | `scripts/seed-test-api-client.ts` | |
 | `AppModule` con `ConfigModule` y `DatabaseModule` | |
@@ -47,7 +47,7 @@ flowchart LR
 | **Controller** | Define rutas (`GET /modulo1/clase01/test`) |
 | **Guard** | Se ejecuta *antes* del controller; aquí valida API key/secret |
 | **Service** | Lógica de negocio (Textract, Glue, etc.; en este paso aún no lo usamos) |
-| **Entity** | Clase que describe una tabla de Postgres (`ApiClient`) |
+| **Entity** | Clase que describe una tabla de Postgres (`ApiClient`); todas viven en `src/entities/` |
 
 **TypeORM** conecta esas entidades con Postgres. Las **migraciones** crean o cambian tablas; el **seed** inserta datos de prueba.
 
@@ -139,7 +139,7 @@ Crea la carpeta `src/auth/` y el archivo `src/auth/auth.module.ts`:
 ```typescript
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ApiClient } from '../api-clients/entities/api-client.entity';
+import { ApiClient } from '../entities/api-client.entity';
 import { ApiKeyGuard } from './guards/api-key.guard';
 
 @Module({
@@ -177,7 +177,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Request } from 'express';
 import { Repository } from 'typeorm';
-import { ApiClient } from '../../api-clients/entities/api-client.entity';
+import { ApiClient } from '../../entities/api-client.entity';
 
 export type AuthenticatedRequest = Request & { apiClient: ApiClient };
 
