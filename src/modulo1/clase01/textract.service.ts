@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  AnalyzeDocumentCommand,
+  AnalyzeExpenseCommand,
+  AnalyzeIDCommand,
   DetectDocumentTextCommand,
   TextractClient,
   UnsupportedDocumentException,
@@ -68,6 +71,73 @@ export class TextractService {
       throw new BadRequestException(
         `Unsupported file extension ".${extension || '?'}". Textract accepts PDF, PNG, JPEG, and TIFF only.`,
       );
+    }
+  }
+    async analyzeForm(s3Key: string) {
+    return this.analyzeDocument(s3Key, ['FORMS']);
+  }
+
+  async analyzeStatement(s3Key: string) {
+    return this.analyzeDocument(s3Key, ['TABLES']);
+  }
+
+  async analyzeId(s3Key: string) {
+    this.assertSupportedFormat(s3Key);
+
+    const command = new AnalyzeIDCommand({
+      DocumentPages: [
+        {
+          S3Object: {
+            Bucket: this.config.getOrThrow<string>('AWS_S3_BUCKET'),
+            Name: s3Key,
+          },
+        },
+      ],
+    });
+
+    return await this.client.send(command);
+  }
+
+  async analyzeExpense(s3Key: string) {
+    this.assertSupportedFormat(s3Key);
+
+    const command = new AnalyzeExpenseCommand({
+      Document: {
+        S3Object: {
+          Bucket: this.config.getOrThrow<string>('AWS_S3_BUCKET'),
+          Name: s3Key,
+        },
+      },
+    });
+
+    return await this.client.send(command);
+  }
+
+  private async analyzeDocument(
+    s3Key: string,
+    featureTypes: ('FORMS' | 'TABLES')[],
+  ) {
+    this.assertSupportedFormat(s3Key);
+
+    const command = new AnalyzeDocumentCommand({
+      Document: {
+        S3Object: {
+          Bucket: this.config.getOrThrow<string>('AWS_S3_BUCKET'),
+          Name: s3Key,
+        },
+      },
+      FeatureTypes: featureTypes,
+    });
+
+    try {
+      return await this.client.send(command);
+    } catch (error) {
+      if (error instanceof UnsupportedDocumentException) {
+        throw new BadRequestException(
+          'Unsupported document format for Textract. Use PDF, PNG, JPEG, or TIFF.',
+        );
+      }
+      throw error;
     }
   }
 }
