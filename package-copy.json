@@ -7,13 +7,13 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
-    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/database/data-source-acarapi.ts",
-    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/database/data-source-acarapi.ts",
-    "migration:show": "typeorm-ts-node-commonjs migration:show -d src/database/data-source-acarapi.ts",
-    "seed:api-client": "ts-node scripts/seed-test-api-client-acarapi.ts"
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/database/data-source.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/database/data-source.ts",
+    "migration:show": "typeorm-ts-node-commonjs migration:show -d src/database/data-source.ts",
+    "seed:api-client": "ts-node scripts/seed-test-api-client.ts"
   },
   "dependencies": {
-    "@aws-sdk/client-textract": "^3.1064.0",
+    "@aws-sdk/client-textract": "^3.1061.0",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.0",

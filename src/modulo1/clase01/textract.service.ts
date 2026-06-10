@@ -5,6 +5,7 @@ import {
   AnalyzeExpenseCommand,
   AnalyzeIDCommand,
   DetectDocumentTextCommand,
+  Query,
   TextractClient,
   UnsupportedDocumentException,
 } from '@aws-sdk/client-textract';
@@ -73,7 +74,7 @@ export class TextractService {
       );
     }
   }
-    async analyzeForm(s3Key: string) {
+  async analyzeForm(s3Key: string) {
     return this.analyzeDocument(s3Key, ['FORMS']);
   }
 
@@ -139,5 +140,24 @@ export class TextractService {
       }
       throw error;
     }
+  }
+
+  async analyzeWithQueries(s3Key: string, queries: Query[]) {
+    this.assertSupportedFormat(s3Key);
+
+    const command = new AnalyzeDocumentCommand({
+      Document: {
+        S3Object: {
+          Bucket: this.config.getOrThrow<string>('AWS_S3_BUCKET'),
+          Name: s3Key,
+        },
+      },
+      FeatureTypes: ['QUERIES'],
+      QueriesConfig: {
+        Queries: queries,
+      },
+    });
+
+    return await this.client.send(command);
   }
 }

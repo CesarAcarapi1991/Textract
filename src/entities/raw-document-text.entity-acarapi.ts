@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'raw_document_texts_acarapi' })
+@Entity({ name: 'raw_document_texts' })
 export class RawDocumentText {
   @PrimaryGeneratedColumn()
   id: number;

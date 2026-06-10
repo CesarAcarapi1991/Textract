@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'api_clients_acarapi' })
+@Entity({ name: 'api_clients' })
 export class ApiClient {
   @PrimaryGeneratedColumn('uuid')
   id: string;
